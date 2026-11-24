@@ -270,6 +270,27 @@ def build_base(arm_xy):
     return base, top_z
 
 
+def build_plate_lines(lines):
+    """Plate with any number of centred lines: [(text, cap_height_mm, gap_below_mm), ...].
+    Lines too wide for the plate are squeezed horizontally to fit."""
+    w, h = PLATE_W - 2 * CLR, PLATE_H - 2 * CLR
+    plate = rounded_box(w, h, PLATE_T, 1.0)
+    raised = rounded_box(w - 2.0, h - 2.0, TEXT_T, 1.0) - rounded_box(w - 4.0, h - 4.0, TEXT_T + 1, 0.6).translate([0, 0, -0.5])
+    total = sum(s for _, s, _ in lines) + sum(g for _, _, g in lines[:-1])
+    y = total / 2
+    for txt, size, gap in lines:
+        t = text_section(txt, size)
+        (x0, _), (x1, _) = np.array(t.bounds()).reshape(2, 2)
+        if x1 - x0 > w - 8:
+            t = t.scale([(w - 8) / (x1 - x0), 1])
+        raised += Manifold.extrude(t, TEXT_T).translate([0, y - size / 2, 0])
+        y -= size + gap
+    return plate + raised.translate([0, 0, PLATE_T - 0.01])
+
+
+CHAMPION_LINES = [("CHAMPION", 7.5, 3.2), ("MURRI-OKI", 5.0, 2.8), ("2026 MEMBERS CONFERENCE", 2.8, 0)]
+
+
 def build_plate(line1, line2):
     w, h = PLATE_W - 2 * CLR, PLATE_H - 2 * CLR
     plate = rounded_box(w, h, PLATE_T, 1.0)
@@ -307,6 +328,7 @@ if __name__ == "__main__":
               "3rd": ("MURRI OKI", "3RD PLACE"), "blank": (None, None)}
     for k, (a, b) in plates.items():
         save(build_plate(a, b), f"plate_{k}.stl")
+    save(build_plate_lines(CHAMPION_LINES), "plate_champion.stl")
 
     # full assembly for previewing (not for printing)
     off = [arm_xy[0], arm_xy[1], top_z]

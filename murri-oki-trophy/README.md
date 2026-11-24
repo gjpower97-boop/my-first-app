@@ -18,6 +18,7 @@ About **213 mm tall** once assembled. Each part fits on any Bambu printer (A1, P
 | `mic_handle.stl` | Accent colour | Goes in tail first from the top of the fist. The flared collar stops it. |
 | `mic_head.stl` | Accent colour | Grille ball. Press it onto the peg on the handle. |
 | `plate_1st.stl` / `plate_2nd.stl` / `plate_3rd.stl` | Accent colour + black text | "MURRI OKI" / "1ST PLACE" and so on. |
+| `plate_champion.stl` | Accent colour + black text | "CHAMPION" / "MURRI-OKI" / "2026 MEMBERS CONFERENCE". |
 | `plate_blank.stl` | Any | Add your own text in Bambu Studio (right-click > Add text, or an SVG). |
 | `assembly_preview.3mf` | – | The whole trophy put together, for viewing only. Don't print it. |
 

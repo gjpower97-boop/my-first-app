@@ -310,6 +310,21 @@ def build_plate_parts(lines):
     return parts
 
 
+def write_champion_3mf():
+    """One Bambu Studio file: plate + border + each text line as parts, each on its own filament slot."""
+    from bambu3mf import write_bambu_3mf
+    parts = build_plate_parts(CHAMPION_LINES)
+    names = {"plate": "Background", "border": "Border"}
+    out = []
+    slots = {"plate": 1, "border": 2, "line1": 2, "line2": 3, "line3": 4}   # fits a 4-slot AMS
+    for k, m in parts.items():
+        slot = slots.get(k[:5], slots.get(k, 4))
+        label = names.get(k) or "Text - " + CHAMPION_LINES[int(k[4]) - 1][0]
+        out.append((label, to_trimesh(m), slot))
+    write_bambu_3mf(os.path.join(OUT, "plate_champion_colours.3mf"), out, "Murri-Oki Champion plate")
+    print("plate_champion_colours.3mf written")
+
+
 CHAMPION_LINES = [("CHAMPION", 7.5, 3.2), ("MURRI-OKI", 5.0, 2.8), ("2026 MEMBERS CONFERENCE", 2.8, 0)]
 
 
@@ -354,6 +369,7 @@ if __name__ == "__main__":
     os.makedirs(os.path.join(OUT, "plate_champion_parts"), exist_ok=True)
     for k, m in build_plate_parts(CHAMPION_LINES).items():
         save(m, f"plate_champion_parts/champion_{k}.stl")
+    write_champion_3mf()
 
     # full assembly for previewing (not for printing)
     off = [arm_xy[0], arm_xy[1], top_z]
